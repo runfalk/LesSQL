@@ -15,14 +15,12 @@ class LateOperatorOverload(object):
 
     __slots__ = ()
 
-    overload_map = {}
-
     # Arithmetic expressions
     def __add__(self, other):
         return self.perform(self, "add", other)
 
     def __sub__(self, other):
-        return self.perform(self, "subract", other)
+        return self.perform(self, "subtract", other)
 
     def __mul__(self, other):
         return self.perform(self, "multiply", other)
@@ -103,7 +101,8 @@ def operator_mapping_factory(mapping=None):
 
     return OperatorMapping
 
-Comparable = operator_mapping_factory()
+class Comparable(operator_mapping_factory()):
+    pass
 
 class ComparableExpression(Comparable, Expression):
     __slots__ = ()
