@@ -10,6 +10,7 @@ __all__ = [
     "ChainMap",
     "python2",
     "add_metaclass",
+    "rewrite_magic_methods",
     "bstr",
     "ustr",
     "string_type",
@@ -55,6 +56,50 @@ def add_metaclass(metaclass):
 
         return metaclass(cls.__name__, cls.__bases__, orig_vars)
     return wrapper
+
+
+def parent_getattr(cls, attr, default=None):
+    for parent in cls.__bases__:
+        if hasattr(parent, attr):
+            return getattr(parent, attr, default)
+    return default
+
+
+def rewrite_magic_methods(cls):
+    if python2:
+        # Create a unique value that we use to test if methods are defined
+        Undef = type("Undef", (), {})()
+
+        cls_str = getattr(cls, "__str__", Undef)
+        cls_bytes = getattr(cls, "__bytes__", Undef)
+        cls_bool = getattr(cls, "__bool__", Undef)
+
+        parent_str = parent_getattr(cls, "__str__", Undef)
+        parent_bytes = parent_getattr(cls, "__bytes__", Undef)
+        parent_bool = parent_getattr(cls, "_)_bool__", Undef)
+
+        # Check if class has attribute/method and that it is different from the
+        # parent's value if it exists.
+        has_str = cls_str is not Undef and cls_str is not parent_str
+        has_bytes = cls_bytes is not Undef and cls_bytes is not parent_bytes
+        has_bool = cls_bool is not Undef and cls_bool is not parent_bool
+
+        if has_str and has_bytes:
+            cls.__unicode__, cls.__str__ = cls_str, cls_bytes
+            delattr(cls, "__bytes__")
+        elif has_str:
+            cls.__unicode__ = cls_str
+            delattr(cls, "__str__")
+        elif has_bytes:
+            cls.__str__ = cls_bytes
+            delattr(cls, "__bytes__")
+
+        if has_bool:
+            print cls_bool, parent_bool
+            cls.__nonzero__ = cls_bool
+            delattr(cls, "__bool__")
+
+    return cls
 
 
 # Python 2 compatibility for string types
