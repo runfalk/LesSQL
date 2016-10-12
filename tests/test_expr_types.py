@@ -1,7 +1,6 @@
 import pytest
 import sys
 
-from lessql._compat import python2
 from lessql.expr import compile
 
 

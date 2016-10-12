@@ -45,7 +45,7 @@ def test_parent_getattr():
     assert parent_getattr(C, "c") is None
 
 
-@pytest.mark.skipif(not python2, reason="Python 2 specific test")
+@pytest.mark.skipif(not is_python2, reason="Python 2 specific test")
 def test_python2_rewrite_magic_methods_str():
     unicode_atom = u"unicode"
 
@@ -57,7 +57,7 @@ def test_python2_rewrite_magic_methods_str():
     assert Unicode().__unicode__() is unicode_atom
 
 
-@pytest.mark.skipif(not python2, reason="Python 2 specific test")
+@pytest.mark.skipif(not is_python2, reason="Python 2 specific test")
 def test_python2_rewrite_magic_methods_bytes():
     bytes_atom = b"unicode"
 
@@ -70,7 +70,7 @@ def test_python2_rewrite_magic_methods_bytes():
     assert not hasattr(Bytes(), "__bytes__")
 
 
-@pytest.mark.skipif(not python2, reason="Python 2 specific test")
+@pytest.mark.skipif(not is_python2, reason="Python 2 specific test")
 def test_python2_rewrite_magic_methods_str_bytes():
     unicode_atom = u"unicode"
     bytes_atom = b"unicode"
@@ -88,7 +88,7 @@ def test_python2_rewrite_magic_methods_str_bytes():
     assert not hasattr(Str(), "__bytes__")
 
 
-@pytest.mark.skipif(not python2, reason="Python 2 specific test")
+@pytest.mark.skipif(not is_python2, reason="Python 2 specific test")
 def test_python2_rewrite_magic_methods_bool():
     bytes_atom = b"unicode"
 

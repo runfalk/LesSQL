@@ -8,7 +8,7 @@ from sys import version_info
 
 __all__ = [
     "ChainMap",
-    "python2",
+    "is_python2",
     "add_metaclass",
     "rewrite_magic_methods",
     "bstr",
@@ -18,13 +18,16 @@ __all__ = [
 ]
 
 
+# Use Python's own ChainMap implementation when it is available, otherwise fall
+# back on backport. Other modules should import ChainMap from here instead of
+# performing the check in that module.
 try:
     from collections import ChainMap
 except ImportError:
     from chainmap import ChainMap
 
 
-python2 = version_info.major == 2
+is_python2 = version_info.major == 2
 
 
 def add_metaclass(metaclass):
@@ -66,7 +69,7 @@ def parent_getattr(cls, attr, default=None):
 
 
 def rewrite_magic_methods(cls):
-    if python2:
+    if is_python2:
         # Create a unique value that we use to test if methods are defined
         Undef = type("Undef", (), {})()
 
@@ -103,7 +106,7 @@ def rewrite_magic_methods(cls):
 
 
 # Python 2 compatibility for string types
-if python2:
+if is_python2:
     bstr = str
     ustr = unicode
     string_type = basestring
